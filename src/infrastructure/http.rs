@@ -24,7 +24,7 @@ impl HttpClient for HybridHttpClient {
         };
 
         let request = format!(
-            "{} {} HTTP/1.1\r\nHost: {}\r\nConnection: close\r\nUser-Agent: udoc/0.1\r\nAccept: */*\r\n\r\n",
+            "{} {} HTTP/1.1\r\nHost: {}\r\nConnection: close\r\nUser-Agent: udoc/0.2\r\nAccept: */*\r\n\r\n",
             method, path, host_header
         );
 
@@ -82,7 +82,7 @@ impl HttpClient for HybridHttpClient {
             .method(method)
             .uri(&uri)
             .header("host", &host_header)
-            .header("user-agent", "udoc/0.1")
+            .header("user-agent", "udoc/0.2")
             .header("accept", "*/*")
             .body(Empty::<Bytes>::new())
             .map_err(|e| UdocError::http(format!("failed to build request: {}", e)))?;
