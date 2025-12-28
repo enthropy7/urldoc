@@ -1,6 +1,13 @@
 # udoc
 
+
 > Ultimate connection diagnostics for URLs: DNS/TCP/TLS/TTFB timings + h2 support + cert summary + redirects + bottleneck analysis.
+> urldoc (`udoc`) is a minimal CLI that prints a concise connection report for any HTTP/HTTPS URL.
+Run `udoc <url>` to see the final URL after redirects, the actual IP:port you hit, and the negotiated protocol details.
+It breaks latency down into phases (DNS, TCP connect, TLS handshake, TTFB, total) so you can instantly spot where time is spent.
+For HTTPS, it summarizes TLS parameters (version, ALPN, cipher) and the leaf certificate (issuer/subject, validity window, days left, SHA-256 fingerprint).
+The output is designed to be readable by humans first—no verbosity, no “curl -v” noise—just the signal you need for debugging.
+Internally, the project follows Clean Architecture with strict separation between domain models, use cases, and infrastructure adapters. Easy to modify, if you want.
 
 ## Install
 
@@ -99,15 +106,6 @@ UDOC_REPEAT       Repeat count for stats [default: 1]
 | 6 | HTTP error |
 | 7 | Timeout |
 | 1 | Other |
-
-## Architecture
-
-Clean Architecture:
-- **Domain** — models (`Report`, `TimingBreakdown`, `HopTiming`, `TlsSummary`, `CertSummary`)
-- **Ports** — traits (`DnsResolver`, `TcpDialer`, `TlsHandshaker`, `HttpClient`, `IoStream`)
-- **Application** — `GenerateReportUseCase`, `Config`
-- **Infrastructure** — adapters (tokio, rustls, hyper, hickory-resolver)
-- **Presentation** — CLI, PrettyRenderer, JsonRenderer
 
 ## License
 
