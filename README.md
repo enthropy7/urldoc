@@ -12,7 +12,7 @@ Internally, the project follows Clean Architecture with strict separation betwee
 ## Install
 
 ```bash
-cargo install --path .
+cargo install udoc
 ```
 
 ## Usage
