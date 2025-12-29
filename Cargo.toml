@@ -1,6 +1,6 @@
 [package]
 name = "udoc"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 rust-version = "1.92"
 description = "Connection diagnostics for URLs: DNS/TCP/TLS/TTFB timings + HTTP/2 + cert summary + redirects"

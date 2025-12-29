@@ -66,14 +66,17 @@ impl HttpClient for HybridHttpClient {
     }
 
     async fn request_h2(&self, stream: BoxedIoStream, method: &str, host: &str, port: u16, path: &str, body_limit: usize) -> Result<HttpResponse, UdocError> {
-        let host_header = if port == 443 { host.to_string() } else { format!("{}:{}", host, port) };
-        let authority = host_header.clone();
+        let authority = if port == 443 { host.to_string() } else { format!("{}:{}", host, port) };
         let uri = format!("https://{}{}", authority, path);
 
         let start = Instant::now();
 
         let io = TokioIo(stream);
-        let (mut sender, conn) = http2::handshake(TokioExecutor::new(), io).await
+        let (mut sender, conn) = http2::Builder::new(TokioExecutor::new())
+            .initial_stream_window_size(65535)
+            .initial_connection_window_size(65535)
+            .max_frame_size(16384)
+            .handshake(io).await
             .map_err(|e| UdocError::http(format!("h2 handshake failed: {}", e)))?;
 
         tokio::spawn(async move { let _ = conn.await; });
@@ -81,8 +84,7 @@ impl HttpClient for HybridHttpClient {
         let req = hyper::Request::builder()
             .method(method)
             .uri(&uri)
-            .header("host", &host_header)
-            .header("user-agent", "udoc/0.2")
+            .header("user-agent", "udoc/0.2.1")
             .header("accept", "*/*")
             .body(Empty::<Bytes>::new())
             .map_err(|e| UdocError::http(format!("failed to build request: {}", e)))?;
